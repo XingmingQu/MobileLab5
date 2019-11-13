@@ -169,6 +169,7 @@
                                                 </state>
                                                 <connections>
                                                     <action selector="startCalibration:" destination="VuB-Wa-oi9" eventType="touchUpInside" id="eHb-CC-L1h"/>
+                                                    <action selector="uploadImage:" destination="aGB-Jt-6Sz" eventType="touchUpInside" id="fkt-zj-rEf"/>
                                                 </connections>
                                             </button>
                                         </subviews>

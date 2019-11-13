@@ -11,9 +11,9 @@ import Vision
 import CoreImage
 import Accelerate
 
-let SERVER_URL = "http://10.8.116.92:8000" // change this for your server name!!!
+let SERVER_URL = "http://10.8.107.62:8000" // change this for your server name!!!
 
-class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UITextFieldDelegate {
+class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UITextFieldDelegate,URLSessionDelegate {
     
     //MARK: UI View Elements
     @IBOutlet weak var dsidLabel: UILabel!
@@ -26,7 +26,7 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
     }
     
     let mytool = tools()
-
+    let operationQueue = OperationQueue()
     var session = URLSession()
     let animation = CATransition()
     var dsid:Int = 0 {
@@ -37,6 +37,9 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
                 self.dsidLabel.text = "Current DSID: \(self.dsid)"
             }
         }
+    }
+    @IBAction func uploadImage(_ sender: UIButton) {
+        sendFeatures(mainImageView.image!, withLabel: NameTextField.text!)
     }
     
     //MARK: Comm with Server
@@ -87,6 +90,16 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
         NameTextField.delegate = self
         // Do any additional setup after loading the view, typically from a nib.
         dsid = 1
+        
+        let sessionConfig = URLSessionConfiguration.ephemeral
+        
+        sessionConfig.timeoutIntervalForRequest = 5.0
+        sessionConfig.timeoutIntervalForResource = 8.0
+        sessionConfig.httpMaximumConnectionsPerHost = 1
+        
+        self.session = URLSession(configuration: sessionConfig,
+            delegate: self,
+            delegateQueue:self.operationQueue)
     }
     
     //MARK: ML Model Load
@@ -97,34 +110,6 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
         }
        return tmpModel
     }()
-    
-    // select some different classification models!
-    @IBAction func modelSelectChanged(_ sender: UISegmentedControl) {
-        switch sender.selectedSegmentIndex {
-        case 0:
-            guard let tmpModel = try? VNCoreMLModel(for: GoogLeNetPlaces().model) else {
-                return
-            }
-            model = tmpModel
-        case 1:
-            guard let tmpModel = try? VNCoreMLModel(for: SqueezeNet().model) else {
-                return
-            }
-            model = tmpModel
-        case 2:
-            guard let tmpModel = try? VNCoreMLModel(for: Resnet50().model) else {
-                return
-            }
-            model = tmpModel
-        default:
-            return
-        }
-        // update UI if we changed and an image exists
-        if let image = self.mainImageView.image {
-            classifyImage(image: image)
-        }
-    }
-    
     
     //MARK: Camera View Presentation
     @IBAction func takePicture(_ sender: UIButton) {
