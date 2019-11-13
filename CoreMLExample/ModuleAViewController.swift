@@ -5,12 +5,14 @@
 //  Created by Eric Larson on 9/5/17.
 //  Copyright © 2017 Eric Larson. All rights reserved.
 //
-
 import UIKit
 import CoreML
 import Vision
 import CoreImage
 import Accelerate
+
+let SERVER_URL = "http://10.8.116.92:8000" // change this for your server name!!!
+
 class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UITextFieldDelegate {
     
     //MARK: UI View Elements
@@ -22,6 +24,10 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
       textField.resignFirstResponder()
       return true
     }
+    
+    let mytool = tools()
+
+    var session = URLSession()
     let animation = CATransition()
     var dsid:Int = 0 {
         didSet{
@@ -31,6 +37,47 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
                 self.dsidLabel.text = "Current DSID: \(self.dsid)"
             }
         }
+    }
+    
+    //MARK: Comm with Server
+    func sendFeatures(_ image:UIImage, withLabel label:String){
+        let baseURL = "\(SERVER_URL)/AddDataPoint"
+        let postUrl = URL(string: "\(baseURL)")
+        
+        // create a custom HTTP POST request
+        var request = URLRequest(url: postUrl!)
+        
+        // data to send in body of post request (send arguments as json)
+        let jpegData = UIImageJPEGRepresentation(image, 1.0)
+        let encodedString = jpegData?.base64EncodedString()
+        
+        let jsonUpload:NSDictionary = ["feature":encodedString!,
+                                       "label":"\(label)",
+                                       "dsid":self.dsid]
+        
+        
+        let requestBody:Data? = self.mytool.convertDictionaryToData(with:jsonUpload)
+        
+        request.httpMethod = "POST"
+        request.httpBody = requestBody
+        
+        let postTask : URLSessionDataTask = self.session.dataTask(with: request,
+            completionHandler:{(data, response, error) in
+                if(error != nil){
+                    if let res = response{
+                        print("Response:\n",res)
+                    }
+                }
+                else{
+                    let jsonDictionary = self.mytool.convertDataToDictionary(with: data)
+                    
+                    print(jsonDictionary["feature"]!)
+                    print(jsonDictionary["label"]!)
+                }
+
+        })
+        
+        postTask.resume() // start the task
     }
     
     
@@ -109,33 +156,12 @@ extension ModuleAViewController: UIImagePickerControllerDelegate {
         
         let newImage = classifyImage(image: image)
         let targetSize = CGSize(width: 300, height: 400)
-        let resizedImg = resize(image: newImage, targetSize: targetSize)
+        let resizedImg = self.mytool.resize(image: newImage, targetSize: targetSize)
         mainImageView.image = resizedImg
     }
     
-    //https://gist.github.com/marcosgriselli/00ab6c68f48ccaeb110afc82786767ec
-    func resize(image: UIImage, targetSize: CGSize) -> UIImage {
-        let size = image.size
-        
-        let widthRatio  = targetSize.width  / image.size.width
-        let heightRatio = targetSize.height / image.size.height
-        
-        var newSize: CGSize
-        if widthRatio > heightRatio {
-            newSize = CGSize(width: size.width * heightRatio, height: size.height * heightRatio)
-        } else {
-            newSize = CGSize(width: size.width * widthRatio,  height: size.height * widthRatio)
-        }
-        
-        let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
-        
-        UIGraphicsBeginImageContextWithOptions(newSize, false, 0)
-        image.draw(in: rect)
-        let newImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        
-        return newImage!
-    }
+
+    
     //MARK: Custom Classification Methods
     // use vision API to classify image
     func classifyImage(image:UIImage) -> (UIImage){
