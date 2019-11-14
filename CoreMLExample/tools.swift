@@ -59,4 +59,10 @@ class tools: NSObject {
             return NSDictionary() // just return empty
         }
     }
+    
+    func setDelayedWaitingToTrue(_ time:Double){
+        DispatchQueue.main.asyncAfter(deadline: .now() + time, execute: {
+      
+        })
+    }
 }

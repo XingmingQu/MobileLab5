@@ -16,6 +16,7 @@ import Accelerate
 class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UITextFieldDelegate,URLSessionDelegate {
     
     //MARK: UI View Elements
+    @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var dsidLabel: UILabel!
     @IBOutlet weak var NameTextField: UITextField!
     @IBOutlet weak var URLtextField: UITextField!
@@ -25,7 +26,7 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
       textField.resignFirstResponder()
       return true
     }
-    var SERVER_URL = "10.8.107.62" {
+    var SERVER_URL = "192.168.1.7" {
         didSet{
             DispatchQueue.main.async{
                 // update label when set
@@ -48,11 +49,18 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
         }
     }
     @IBAction func uploadImage(_ sender: UIButton) {
-        sendFeatures(mainImageView.image!, withLabel: NameTextField.text!)
+        let result = sendFeatures(mainImageView.image!, withLabel: NameTextField.text!)
+        sleep(1)
+        if result == 0{
+            statusLabel.text = "Upload Success!"
+            statusLabel.isHidden = false
+            mainImageView.image =  UIImage(named: "ok")
+            
+        }
     }
     
     //MARK: Comm with Server
-    func sendFeatures(_ image:UIImage, withLabel label:String){
+    func sendFeatures(_ image:UIImage, withLabel label:String) -> (Int){
         let targetURL = "http://\(self.URLtextField.text!):8000"
         let baseURL = "\(targetURL)/AddDataPoint"
         let postUrl = URL(string: "\(baseURL)")
@@ -73,7 +81,7 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
         
         request.httpMethod = "POST"
         request.httpBody = requestBody
-        
+
         let postTask : URLSessionDataTask = self.session.dataTask(with: request,
             completionHandler:{(data, response, error) in
                 if(error != nil){
@@ -84,13 +92,16 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
                 else{
                     let jsonDictionary = self.mytool.convertDataToDictionary(with: data)
                     
-                    print(jsonDictionary["feature"]!)
+//                    print(jsonDictionary["feature"]!)
                     print(jsonDictionary["label"]!)
+                    
                 }
 
         })
         
         postTask.resume() // start the task
+
+        return 0
     }
     
     
@@ -100,9 +111,9 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
         NameTextField.delegate = self
         // Do any additional setup after loading the view, typically from a nib.
         dsid = 1
-        URLtextField.text = "10.8.107.62"
+        URLtextField.text = "192.168.1.7"
         let sessionConfig = URLSessionConfiguration.ephemeral
-        
+        statusLabel.isHidden = true
         sessionConfig.timeoutIntervalForRequest = 5.0
         sessionConfig.timeoutIntervalForResource = 8.0
         sessionConfig.httpMaximumConnectionsPerHost = 1
