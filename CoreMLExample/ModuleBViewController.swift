@@ -13,15 +13,15 @@ import Accelerate
 
 //let SERVER_URL = "http://10.8.107.62:8000" // change this for your server name!!!
 
-class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UITextFieldDelegate,URLSessionDelegate {
+class ModuleBViewController: UIViewController, UINavigationControllerDelegate,UITextFieldDelegate,URLSessionDelegate {
     
     //MARK: UI View Elements
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var dsidLabel: UILabel!
-    @IBOutlet weak var NameTextField: UITextField!
+
     @IBOutlet weak var URLtextField: UITextField!
     @IBOutlet weak var mainImageView: UIImageView!
-    @IBOutlet weak var classifierLabel: UILabel!
+
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {   //delegate method
       textField.resignFirstResponder()
       return true
@@ -49,49 +49,20 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
         }
     }
     @IBAction func uploadImage(_ sender: UIButton) {
-        let result = sendFeatures(mainImageView.image!, withLabel: NameTextField.text!)
-        sleep(1)
-        if result == 0{
-            statusLabel.text = "Upload Success!"
-            statusLabel.isHidden = false
-            mainImageView.image =  UIImage(named: "ok")
-            
-        }
+        let result = sendFeatures(mainImageView.image!)
+//        sleep(1)
+//        if result == 0{
+//            statusLabel.text = "Upload Success!"
+//            statusLabel.isHidden = false
+//            mainImageView.image =  UIImage(named: "ok")
+//
+//        }
     }
     
-    @IBAction func TrainYourModel(_ sender: UIButton) {
-        
-        // create a GET request for server to update the ML model with current data
-        let targetURL = "http://\(self.URLtextField.text!):8000"
-        let baseURL = "\(targetURL)/UpdateModel"
-        let query = "?dsid=\(self.dsid)"
-        
-        let getUrl = URL(string: baseURL+query)
-        let request: URLRequest = URLRequest(url: getUrl!)
-        let dataTask : URLSessionDataTask = self.session.dataTask(with: request,
-              completionHandler:{(data, response, error) in
-                // handle error!
-                if (error != nil) {
-                    if let res = response{
-                        print("Response:\n",res)
-                    }
-                }
-                else{
-                    let jsonDictionary = self.mytool.convertDataToDictionary(with: data)
-                    
-                    if let resubAcc = jsonDictionary["log"]{
-                        print("log is", resubAcc)
-                    }
-                }
-                                                                    
-        })
-        
-        dataTask.resume() // start the task
-    }
     //MARK: Comm with Server
-    func sendFeatures(_ image:UIImage, withLabel label:String) -> (Int){
+    func sendFeatures(_ image:UIImage) -> (Int){
         let targetURL = "http://\(self.URLtextField.text!):8000"
-        let baseURL = "\(targetURL)/AddDataPoint"
+        let baseURL = "\(targetURL)/PredictOne"
         let postUrl = URL(string: "\(baseURL)")
         
         // create a custom HTTP POST request
@@ -102,7 +73,6 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
         let encodedString = jpegData?.base64EncodedString()
 //        print(image.size.width)
         let jsonUpload:NSDictionary = ["feature":encodedString!,
-                                       "label":"\(label)",
                                        "dsid":self.dsid]
         
         let requestBody:Data? = self.mytool.convertDictionaryToData(with:jsonUpload)
@@ -120,8 +90,12 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
                 else{
                     let jsonDictionary = self.mytool.convertDataToDictionary(with: data)
 //                    print(jsonDictionary["feature"]!)
-                    print(jsonDictionary["label"]!)
-            
+                    print(jsonDictionary["prediction"]!)
+                    let labelResponse = jsonDictionary["prediction"]!
+                    DispatchQueue.main.async{
+                        // update label when set
+                        self.statusLabel.text = labelResponse as? String
+                    }
                 }
         })
         
@@ -132,12 +106,12 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        NameTextField.delegate = self
+//        URLtextField.delegate = self
         // Do any additional setup after loading the view, typically from a nib.
         dsid = 1
         URLtextField.text = "192.168.1.7"
         let sessionConfig = URLSessionConfiguration.ephemeral
-        statusLabel.isHidden = true
+        
         sessionConfig.timeoutIntervalForRequest = 5.0
         sessionConfig.timeoutIntervalForResource = 8.0
         sessionConfig.httpMaximumConnectionsPerHost = 1
@@ -158,7 +132,10 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
     
     //MARK: Camera View Presentation
     @IBAction func takePicture(_ sender: UIButton) {
-        statusLabel.isHidden = true
+        DispatchQueue.main.async{
+            // update label when set
+            self.statusLabel.text = "It takes ~2s to predict"
+        }
         if !UIImagePickerController.isSourceTypeAvailable(.camera) {
             return
         }
@@ -172,7 +149,7 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
     }
 }
 
-extension ModuleAViewController: UIImagePickerControllerDelegate {
+extension ModuleBViewController: UIImagePickerControllerDelegate {
     
     //MARK: Camera View Callbacks
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
