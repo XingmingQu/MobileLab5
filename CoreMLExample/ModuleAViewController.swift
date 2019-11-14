@@ -11,20 +11,29 @@ import Vision
 import CoreImage
 import Accelerate
 
-let SERVER_URL = "http://10.8.107.62:8000" // change this for your server name!!!
+//let SERVER_URL = "http://10.8.107.62:8000" // change this for your server name!!!
 
 class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UITextFieldDelegate,URLSessionDelegate {
     
     //MARK: UI View Elements
     @IBOutlet weak var dsidLabel: UILabel!
     @IBOutlet weak var NameTextField: UITextField!
+    @IBOutlet weak var URLtextField: UITextField!
     @IBOutlet weak var mainImageView: UIImageView!
     @IBOutlet weak var classifierLabel: UILabel!
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {   //delegate method
       textField.resignFirstResponder()
       return true
     }
-    
+    var SERVER_URL = "10.8.107.62" {
+        didSet{
+            DispatchQueue.main.async{
+                // update label when set
+                
+                self.URLtextField.text = (self.SERVER_URL)
+            }
+        }
+    }
     let mytool = tools()
     let operationQueue = OperationQueue()
     var session = URLSession()
@@ -44,7 +53,8 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
     
     //MARK: Comm with Server
     func sendFeatures(_ image:UIImage, withLabel label:String){
-        let baseURL = "\(SERVER_URL)/AddDataPoint"
+        let targetURL = "http://\(self.URLtextField.text!):8000"
+        let baseURL = "\(targetURL)/AddDataPoint"
         let postUrl = URL(string: "\(baseURL)")
         
         // create a custom HTTP POST request
@@ -53,7 +63,7 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
         // data to send in body of post request (send arguments as json)
         let jpegData = UIImageJPEGRepresentation(image, 1.0)
         let encodedString = jpegData?.base64EncodedString()
-        
+//        print(image.size.width)
         let jsonUpload:NSDictionary = ["feature":encodedString!,
                                        "label":"\(label)",
                                        "dsid":self.dsid]
@@ -90,7 +100,7 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
         NameTextField.delegate = self
         // Do any additional setup after loading the view, typically from a nib.
         dsid = 1
-        
+        URLtextField.text = "10.8.107.62"
         let sessionConfig = URLSessionConfiguration.ephemeral
         
         sessionConfig.timeoutIntervalForRequest = 5.0
@@ -139,10 +149,11 @@ extension ModuleAViewController: UIImagePickerControllerDelegate {
             return
         }
         
-        let newImage = classifyImage(image: image)
+//        let newImage = classifyImage(image: image)
         let targetSize = CGSize(width: 300, height: 400)
-        let resizedImg = self.mytool.resize(image: newImage, targetSize: targetSize)
+        let resizedImg = self.mytool.resize(image: image, targetSize: targetSize)
         mainImageView.image = resizedImg
+//        print(resizedImg.size.width)
     }
     
 

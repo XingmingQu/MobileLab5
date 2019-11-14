@@ -184,32 +184,58 @@
                                     </button>
                                 </subviews>
                             </stackView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Take a selfie to add your face to database! " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GOd-ZI-TnH">
-                                <rect key="frame" x="24" y="62.000000000000007" width="327" height="20.333333333333336"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please in put the server ID" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GOd-ZI-TnH">
+                                <rect key="frame" x="24" y="37" width="327" height="20.333333333333329"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="MQc-tT-uds">
+                                <rect key="frame" x="40" y="65" width="295" height="34"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="http://" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cy5-A7-XnN">
+                                        <rect key="frame" x="0.0" y="0.0" width="46.666666666666664" height="34"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rnf-Gv-WQi">
+                                        <rect key="frame" x="53.666666666666686" y="0.0" width="188" height="34"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits"/>
+                                    </textField>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=":8000" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HZZ-nD-qHO">
+                                        <rect key="frame" x="248.66666666666671" y="0.0" width="46.333333333333343" height="34"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="deg-n5-jdC" firstAttribute="centerX" secondItem="cvw-1q-aAj" secondAttribute="centerX" id="2Yp-tg-4Wc"/>
                             <constraint firstItem="zfx-KC-Dse" firstAttribute="centerX" secondItem="cvw-1q-aAj" secondAttribute="centerX" id="6LG-LH-Dh9"/>
-                            <constraint firstItem="9U7-Kw-cD7" firstAttribute="top" secondItem="GOd-ZI-TnH" secondAttribute="bottom" constant="9" id="8vb-wL-XX8"/>
+                            <constraint firstItem="MQc-tT-uds" firstAttribute="centerX" secondItem="cvw-1q-aAj" secondAttribute="centerX" id="Gg8-Qj-dw1"/>
                             <constraint firstItem="GOd-ZI-TnH" firstAttribute="leading" secondItem="baM-Au-jmI" secondAttribute="leading" constant="24" id="KEQ-A5-zix"/>
-                            <constraint firstItem="GOd-ZI-TnH" firstAttribute="top" secondItem="baM-Au-jmI" secondAttribute="top" constant="18" id="RFX-H3-v6E"/>
+                            <constraint firstItem="MQc-tT-uds" firstAttribute="leading" secondItem="baM-Au-jmI" secondAttribute="leading" constant="40" id="WaK-3K-K9k"/>
+                            <constraint firstItem="baM-Au-jmI" firstAttribute="trailing" secondItem="MQc-tT-uds" secondAttribute="trailing" constant="40" id="XYg-Bg-5QB"/>
+                            <constraint firstItem="baM-Au-jmI" firstAttribute="top" secondItem="GOd-ZI-TnH" secondAttribute="top" constant="7" id="e76-jG-DPd"/>
                             <constraint firstItem="zfx-KC-Dse" firstAttribute="centerX" secondItem="cvw-1q-aAj" secondAttribute="centerX" id="fP9-Ee-oje"/>
                             <constraint firstItem="baM-Au-jmI" firstAttribute="bottom" secondItem="deg-n5-jdC" secondAttribute="bottom" constant="17" id="kxb-QD-lCt"/>
                             <constraint firstItem="baM-Au-jmI" firstAttribute="trailing" secondItem="GOd-ZI-TnH" secondAttribute="trailing" constant="24" id="l8k-yf-coq"/>
                             <constraint firstItem="zfx-KC-Dse" firstAttribute="top" secondItem="BxQ-55-Qak" secondAttribute="bottom" constant="25.999999999999943" id="lR7-z3-BYH"/>
                             <constraint firstItem="KMa-mG-azA" firstAttribute="centerX" secondItem="cvw-1q-aAj" secondAttribute="centerX" id="lm9-xi-S2i"/>
                             <constraint firstItem="deg-n5-jdC" firstAttribute="top" secondItem="zfx-KC-Dse" secondAttribute="bottom" constant="27.333333333333371" id="vf7-tO-u3B"/>
+                            <constraint firstItem="MQc-tT-uds" firstAttribute="top" secondItem="GOd-ZI-TnH" secondAttribute="bottom" constant="7.6666666666666714" id="yF0-Qh-mQS"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="baM-Au-jmI"/>
                     </view>
                     <tabBarItem key="tabBarItem" title="ModuleA" id="H9X-BO-eie"/>
                     <connections>
                         <outlet property="NameTextField" destination="BxQ-55-Qak" id="RUC-Ub-c6g"/>
+                        <outlet property="URLtextField" destination="rnf-Gv-WQi" id="FUD-xw-zc2"/>
                         <outlet property="classifierLabel" destination="9U7-Kw-cD7" id="r7D-rU-fAR"/>
                         <outlet property="dsidLabel" destination="y4H-Jl-h4j" id="fOm-U3-LAS"/>
                         <outlet property="mainImageView" destination="zfx-KC-Dse" id="jvt-pG-2MH"/>
@@ -223,7 +249,7 @@
         <!--View Controller-->
         <scene sceneID="NXH-j0-5Xf">
             <objects>
-                <viewController id="VuB-Wa-oi9" customClass="ViewController" customModule="HTTPSwiftExample" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="VuB-Wa-oi9" customClass="ViewController" customModule="CoreMLExample" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="auF-Bo-MVn"/>
                         <viewControllerLayoutGuide type="bottom" id="AtZ-RH-SRC"/>
