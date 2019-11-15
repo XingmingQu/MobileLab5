@@ -17,6 +17,7 @@ class ModuleBViewController: UIViewController, UINavigationControllerDelegate,UI
     
     //MARK: UI View Elements
     @IBOutlet weak var statusLabel: UILabel!
+    @IBOutlet weak var RFstatusLabel: UILabel!
     @IBOutlet weak var dsidLabel: UILabel!
 
     @IBOutlet weak var URLtextField: UITextField!
@@ -26,7 +27,7 @@ class ModuleBViewController: UIViewController, UINavigationControllerDelegate,UI
       textField.resignFirstResponder()
       return true
     }
-    var SERVER_URL = "192.168.1.7" {
+    var SERVER_URL = "10.8.107.72" {
         didSet{
             DispatchQueue.main.async{
                 // update label when set
@@ -49,7 +50,7 @@ class ModuleBViewController: UIViewController, UINavigationControllerDelegate,UI
         }
     }
     @IBAction func uploadImage(_ sender: UIButton) {
-        let result = sendFeatures(mainImageView.image!)
+        let _ = sendFeatures(mainImageView.image!)
 //        sleep(1)
 //        if result == 0{
 //            statusLabel.text = "Upload Success!"
@@ -91,10 +92,16 @@ class ModuleBViewController: UIViewController, UINavigationControllerDelegate,UI
                     let jsonDictionary = self.mytool.convertDataToDictionary(with: data)
 //                    print(jsonDictionary["feature"]!)
                     print(jsonDictionary["prediction"]!)
+                    print(jsonDictionary["RFprediction"]!)
                     let labelResponse = jsonDictionary["prediction"]!
+                    let RFlabelResponse = jsonDictionary["RFprediction"]!
+                    let RF_est_number = jsonDictionary["RF_est_number"]!
                     DispatchQueue.main.async{
                         // update label when set
-                        self.statusLabel.text = labelResponse as? String
+                        let strResult = labelResponse as? String
+                        self.statusLabel.text = "SVM: \(strResult!)"
+                        let RFstrResult = RFlabelResponse as? String
+                        self.RFstatusLabel.text = "RF (E=\(RF_est_number)):\(RFstrResult!)"
                     }
                 }
         })
@@ -109,11 +116,12 @@ class ModuleBViewController: UIViewController, UINavigationControllerDelegate,UI
 //        URLtextField.delegate = self
         // Do any additional setup after loading the view, typically from a nib.
         dsid = 1
-        URLtextField.text = "192.168.1.7"
+        URLtextField.delegate = self
+        URLtextField.text = SERVER_URL
         let sessionConfig = URLSessionConfiguration.ephemeral
         
-        sessionConfig.timeoutIntervalForRequest = 5.0
-        sessionConfig.timeoutIntervalForResource = 8.0
+        sessionConfig.timeoutIntervalForRequest = 25.0
+        sessionConfig.timeoutIntervalForResource = 28.0
         sessionConfig.httpMaximumConnectionsPerHost = 1
         
         self.session = URLSession(configuration: sessionConfig,

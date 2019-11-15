@@ -112,10 +112,10 @@
 		B6442FF91F5F6939004BAB45 /* CoreMLExample */ = {
 			isa = PBXGroup;
 			children = (
+				45381308237BAD4D005A50A3 /* ModuleAViewController.swift */,
 				45381310237DB5AC005A50A3 /* ModuleBViewController.swift */,
 				B6442FFA1F5F6939004BAB45 /* AppDelegate.swift */,
 				B6442FFC1F5F6939004BAB45 /* ViewController.swift */,
-				45381308237BAD4D005A50A3 /* ModuleAViewController.swift */,
 				4538130C237C636D005A50A3 /* tools.swift */,
 				B6442FFE1F5F6939004BAB45 /* Main.storyboard */,
 				B64430011F5F6939004BAB45 /* Assets.xcassets */,

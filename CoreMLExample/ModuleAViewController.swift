@@ -18,6 +18,7 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
     //MARK: UI View Elements
     @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var dsidLabel: UILabel!
+    @IBOutlet weak var parameterTextField: UITextField!
     @IBOutlet weak var NameTextField: UITextField!
     @IBOutlet weak var URLtextField: UITextField!
     @IBOutlet weak var mainImageView: UIImageView!
@@ -26,7 +27,7 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
       textField.resignFirstResponder()
       return true
     }
-    var SERVER_URL = "192.168.1.7" {
+    var SERVER_URL = "10.8.107.72" {
         didSet{
             DispatchQueue.main.async{
                 // update label when set
@@ -49,7 +50,7 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
         }
     }
     @IBAction func uploadImage(_ sender: UIButton) {
-        let result = sendFeatures(mainImageView.image!, withLabel: NameTextField.text!)
+        let _ = sendFeatures(mainImageView.image!, withLabel: NameTextField.text!)
         sleep(1)
 //        if result == 0{
 //            statusLabel.text = "Upload Success!"
@@ -103,6 +104,7 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
 //        print(image.size.width)
         let jsonUpload:NSDictionary = ["feature":encodedString!,
                                        "label":"\(label)",
+            "Parameter":"\(self.parameterTextField.text!)",
                                        "dsid":self.dsid]
         
         let requestBody:Data? = self.mytool.convertDictionaryToData(with:jsonUpload)
@@ -138,9 +140,12 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
     override func viewDidLoad() {
         super.viewDidLoad()
         NameTextField.delegate = self
+        URLtextField.delegate = self
+        parameterTextField.delegate = self
+        parameterTextField.text = "100"
         // Do any additional setup after loading the view, typically from a nib.
         dsid = 1
-        URLtextField.text = "10.8.133.193"
+        URLtextField.text = SERVER_URL
         let sessionConfig = URLSessionConfiguration.ephemeral
 //        statusLabel.isHidden = true
         sessionConfig.timeoutIntervalForRequest = 5.0
@@ -163,7 +168,10 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
     
     //MARK: Camera View Presentation
     @IBAction func takePicture(_ sender: UIButton) {
-//        statusLabel.isHidden = true
+        DispatchQueue.main.async{
+            // update label when set
+            self.statusLabel.text = "Take a selfie!"
+        }
         if !UIImagePickerController.isSourceTypeAvailable(.camera) {
             return
         }
