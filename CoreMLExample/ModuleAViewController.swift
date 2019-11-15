@@ -51,12 +51,12 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
     @IBAction func uploadImage(_ sender: UIButton) {
         let result = sendFeatures(mainImageView.image!, withLabel: NameTextField.text!)
         sleep(1)
-        if result == 0{
-            statusLabel.text = "Upload Success!"
-            statusLabel.isHidden = false
-            mainImageView.image =  UIImage(named: "ok")
-            
-        }
+//        if result == 0{
+//            statusLabel.text = "Upload Success!"
+//            statusLabel.isHidden = false
+//            mainImageView.image =  UIImage(named: "ok")
+//
+//        }
     }
     
     @IBAction func TrainYourModel(_ sender: UIButton) {
@@ -119,9 +119,14 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
                 }
                 else{
                     let jsonDictionary = self.mytool.convertDataToDictionary(with: data)
-//                    print(jsonDictionary["feature"]!)
+                    //                    print(jsonDictionary["feature"]!)
                     print(jsonDictionary["label"]!)
-            
+                    let labelResponse = jsonDictionary["status"]!
+                    print(jsonDictionary["status"]!)
+                    DispatchQueue.main.async{
+                        // update label when set
+                        self.statusLabel.text = labelResponse as? String
+                    }
                 }
         })
         
@@ -135,9 +140,9 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
         NameTextField.delegate = self
         // Do any additional setup after loading the view, typically from a nib.
         dsid = 1
-        URLtextField.text = "192.168.1.7"
+        URLtextField.text = "10.8.133.193"
         let sessionConfig = URLSessionConfiguration.ephemeral
-        statusLabel.isHidden = true
+//        statusLabel.isHidden = true
         sessionConfig.timeoutIntervalForRequest = 5.0
         sessionConfig.timeoutIntervalForResource = 8.0
         sessionConfig.httpMaximumConnectionsPerHost = 1
@@ -158,7 +163,7 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
     
     //MARK: Camera View Presentation
     @IBAction func takePicture(_ sender: UIButton) {
-        statusLabel.isHidden = true
+//        statusLabel.isHidden = true
         if !UIImagePickerController.isSourceTypeAvailable(.camera) {
             return
         }
