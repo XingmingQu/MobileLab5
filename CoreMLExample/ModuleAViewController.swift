@@ -158,13 +158,7 @@ class ModuleAViewController: UIViewController, UINavigationControllerDelegate,UI
     }
     
     //MARK: ML Model Load
-    // Load an image classifier and encapsulate in the Vision model class
-    lazy var model: VNCoreMLModel? = {
-        guard let tmpModel = try? VNCoreMLModel(for: GoogLeNetPlaces().model) else {
-            return nil
-        }
-       return tmpModel
-    }()
+
     
     //MARK: Camera View Presentation
     @IBAction func takePicture(_ sender: UIButton) {
